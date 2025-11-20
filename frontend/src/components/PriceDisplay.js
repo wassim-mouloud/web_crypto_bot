@@ -29,6 +29,17 @@ function PriceDisplay({ priceData, error }) {
   const priceChangeColor = data.change_24h >= 0 ? '#10b981' : '#ef4444';
   const priceChangeSymbol = data.change_24h >= 0 ? '+' : '';
 
+  const getChangeColor = (change) => {
+    if (!change && change !== 0) return '#64748b';
+    return change >= 0 ? '#10b981' : '#ef4444';
+  };
+
+  const formatChange = (change) => {
+    if (!change && change !== 0) return 'N/A';
+    const symbol = change >= 0 ? '+' : '';
+    return `${symbol}${change.toFixed(2)}%`;
+  };
+
   return (
     <div className="price-display">
       <div className="crypto-header">
@@ -50,6 +61,50 @@ function PriceDisplay({ priceData, error }) {
         </div>
       </div>
 
+      {/* Timeframe fluctuations */}
+      <div className="timeframe-section">
+        <h3 className="section-title">Price Fluctuations</h3>
+        <div className="timeframe-grid">
+          <div className="timeframe-item">
+            <span className="timeframe-label">24 Hours</span>
+            <span
+              className="timeframe-value"
+              style={{ color: getChangeColor(data.change_24h) }}
+            >
+              {formatChange(data.change_24h)}
+            </span>
+          </div>
+          <div className="timeframe-item">
+            <span className="timeframe-label">7 Days</span>
+            <span
+              className="timeframe-value"
+              style={{ color: getChangeColor(data.change_7d) }}
+            >
+              {formatChange(data.change_7d)}
+            </span>
+          </div>
+          <div className="timeframe-item">
+            <span className="timeframe-label">30 Days</span>
+            <span
+              className="timeframe-value"
+              style={{ color: getChangeColor(data.change_30d) }}
+            >
+              {formatChange(data.change_30d)}
+            </span>
+          </div>
+          <div className="timeframe-item">
+            <span className="timeframe-label">1 Year</span>
+            <span
+              className="timeframe-value"
+              style={{ color: getChangeColor(data.change_1y) }}
+            >
+              {formatChange(data.change_1y)}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Market details */}
       <div className="price-details">
         <div className="detail-item">
           <span className="detail-label">Market Cap</span>
@@ -63,6 +118,28 @@ function PriceDisplay({ priceData, error }) {
             ${(data.volume_24h / 1e9).toFixed(2)}B
           </span>
         </div>
+        {data.ath && (
+          <div className="detail-item">
+            <span className="detail-label">All-Time High</span>
+            <span className="detail-value">
+              ${data.ath.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              })}
+            </span>
+          </div>
+        )}
+        {data.atl && (
+          <div className="detail-item">
+            <span className="detail-label">All-Time Low</span>
+            <span className="detail-value">
+              ${data.atl.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 8
+              })}
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="last-updated">
