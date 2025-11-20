@@ -1,0 +1,12 @@
+# Web Framework
+Flask==3.0.0
+Flask-Cors==4.0.0
+
+# HTTP Requests
+requests==2.31.0
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# ASGI Server (for production)
+gunicorn==21.2.0
