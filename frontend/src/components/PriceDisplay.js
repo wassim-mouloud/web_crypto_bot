@@ -1,4 +1,3 @@
-import React from 'react';
 import './PriceDisplay.css';
 
 function PriceDisplay({ priceData, error }) {
@@ -15,12 +14,12 @@ function PriceDisplay({ priceData, error }) {
   if (!priceData) {
     return (
       <div className="price-display welcome">
-        <h2>Welcome to Crypto Price Bot</h2>
+        <h2>✨ Welcome to Crypto Price Bot</h2>
         <p>Type a cryptocurrency name to get started!</p>
         <div className="examples">
-          <span className="example-tag">bitcoin</span>
-          <span className="example-tag">ethereum</span>
-          <span className="example-tag">dogecoin</span>
+          <span className="example-tag">₿ bitcoin</span>
+          <span className="example-tag">Ξ ethereum</span>
+          <span className="example-tag">Ð dogecoin</span>
         </div>
       </div>
     );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './ChatInput.css';
 
 function ChatInput({ onSubmit, isLoading }) {
@@ -27,7 +27,7 @@ function ChatInput({ onSubmit, isLoading }) {
         className="chat-submit-btn"
         disabled={isLoading || !input.trim()}
       >
-        {isLoading ? 'Loading...' : 'Get Price'}
+        {isLoading ? '⏳ Loading...' : '🚀 Get Price'}
       </button>
     </form>
   );
