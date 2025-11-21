@@ -72,5 +72,31 @@ def search_crypto(query):
             'error': str(e)
         }), 500
 
+@app.route('/api/top', methods=['GET'])
+def get_top_cryptos():
+    """
+    Get top cryptocurrencies by market cap
+
+    Query params:
+        limit: Number of cryptocurrencies to return (default: 10)
+
+    Returns:
+        JSON with list of top cryptocurrencies
+    """
+    try:
+        limit = request.args.get('limit', default=10, type=int)
+        limit = min(max(limit, 1), 50)  # Clamp between 1 and 50
+
+        results = crypto_service.get_top_cryptos(limit)
+        return jsonify({
+            'success': True,
+            'data': results
+        }), 200
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

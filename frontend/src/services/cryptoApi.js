@@ -58,3 +58,24 @@ export const checkApiStatus = async () => {
     return false;
   }
 };
+
+/**
+ * Get top cryptocurrencies by market cap
+ * @param {number} limit - Number of cryptocurrencies to fetch (default: 10)
+ * @returns {Promise} Array of top cryptocurrencies
+ */
+export const getTopCryptos = async (limit = 10) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/top?limit=${limit}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch top cryptocurrencies');
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error fetching top cryptos:', error);
+    throw error;
+  }
+};

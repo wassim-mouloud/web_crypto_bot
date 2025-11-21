@@ -15,7 +15,7 @@ class CryptoService:
 
     def get_price(self, crypto_id: str) -> Optional[Dict]:
         """
-        Get current price data for a cryptocurrency
+        Get current price data for a cryptocurrency with multi-timeframe changes
 
         Args:
             crypto_id: Cryptocurrency ID (e.g., 'bitcoin', 'ethereum')
@@ -24,7 +24,7 @@ class CryptoService:
             Dictionary with price information or None if not found
         """
         try:
-            # CoinGecko endpoint for simple price
+            # Get current price data
             endpoint = f"{self.BASE_URL}/simple/price"
 
             params = {
@@ -47,13 +47,34 @@ class CryptoService:
 
             crypto_data = data[crypto_id.lower()]
 
-            # Format the response
+            # Get additional data with market info
+            detail_endpoint = f"{self.BASE_URL}/coins/{crypto_id.lower()}"
+            detail_params = {
+                'localization': 'false',
+                'tickers': 'false',
+                'community_data': 'false',
+                'developer_data': 'false',
+                'sparkline': 'false'
+            }
+
+            detail_response = self.session.get(detail_endpoint, params=detail_params)
+            detail_response.raise_for_status()
+            detail_data = detail_response.json()
+
+            market_data = detail_data.get('market_data', {})
+
+            # Format the response with multi-timeframe changes
             return {
                 'name': crypto_id.lower(),
                 'price_usd': crypto_data.get('usd'),
                 'market_cap': crypto_data.get('usd_market_cap'),
                 'volume_24h': crypto_data.get('usd_24h_vol'),
                 'change_24h': crypto_data.get('usd_24h_change'),
+                'change_7d': market_data.get('price_change_percentage_7d'),
+                'change_30d': market_data.get('price_change_percentage_30d'),
+                'change_1y': market_data.get('price_change_percentage_1y'),
+                'ath': market_data.get('ath', {}).get('usd'),
+                'atl': market_data.get('atl', {}).get('usd'),
                 'last_updated': crypto_data.get('last_updated_at')
             }
 
@@ -129,3 +150,51 @@ class CryptoService:
         except requests.exceptions.RequestException as e:
             print(f"Error fetching trending cryptocurrencies: {e}")
             raise Exception("Failed to fetch trending cryptocurrencies")
+
+    def get_top_cryptos(self, limit: int = 10) -> List[Dict]:
+        """
+        Get top cryptocurrencies by market cap
+
+        Args:
+            limit: Number of top cryptocurrencies to return (default: 10)
+
+        Returns:
+            List of top cryptocurrencies with price data
+        """
+        try:
+            endpoint = f"{self.BASE_URL}/coins/markets"
+
+            params = {
+                'vs_currency': 'usd',
+                'order': 'market_cap_desc',
+                'per_page': limit,
+                'page': 1,
+                'sparkline': 'false',
+                'price_change_percentage': '24h,7d,30d'
+            }
+
+            response = self.session.get(endpoint, params=params)
+            response.raise_for_status()
+
+            data = response.json()
+
+            return [
+                {
+                    'id': coin.get('id'),
+                    'name': coin.get('name'),
+                    'symbol': coin.get('symbol', '').upper(),
+                    'rank': coin.get('market_cap_rank'),
+                    'price_usd': coin.get('current_price'),
+                    'market_cap': coin.get('market_cap'),
+                    'volume_24h': coin.get('total_volume'),
+                    'change_24h': coin.get('price_change_percentage_24h'),
+                    'change_7d': coin.get('price_change_percentage_7d_in_currency'),
+                    'change_30d': coin.get('price_change_percentage_30d_in_currency'),
+                    'image': coin.get('image')
+                }
+                for coin in data
+            ]
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching top cryptocurrencies: {e}")
+            raise Exception("Failed to fetch top cryptocurrencies")
