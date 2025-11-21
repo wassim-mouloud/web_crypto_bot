@@ -17,7 +17,7 @@ function ChatInput({ onSubmit, isLoading }) {
       <input
         type="text"
         className="chat-input"
-        placeholder="Type a cryptocurrency name (e.g., bitcoin, ethereum) or 'top 10'..."
+        placeholder="Ask me anything! (e.g., 'bitcoin price', 'show me top 10', 'what is ethereum')..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
         disabled={isLoading}
