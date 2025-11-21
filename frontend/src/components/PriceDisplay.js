@@ -1,6 +1,6 @@
 import './PriceDisplay.css';
 
-function PriceDisplay({ priceData, error }) {
+function PriceDisplay({ priceData, error, onExampleClick }) {
   if (error) {
     return (
       <div className="price-display error">
@@ -17,9 +17,15 @@ function PriceDisplay({ priceData, error }) {
         <h2>✨ Welcome to Crypto Price Bot</h2>
         <p>Type a cryptocurrency name to get started!</p>
         <div className="examples">
-          <span className="example-tag">₿ bitcoin</span>
-          <span className="example-tag">Ξ ethereum</span>
-          <span className="example-tag">Ð dogecoin</span>
+          <button className="example-tag" onClick={() => onExampleClick && onExampleClick('bitcoin')}>
+            ₿ bitcoin
+          </button>
+          <button className="example-tag" onClick={() => onExampleClick && onExampleClick('ethereum')}>
+            Ξ ethereum
+          </button>
+          <button className="example-tag" onClick={() => onExampleClick && onExampleClick('dogecoin')}>
+            Ð dogecoin
+          </button>
         </div>
       </div>
     );

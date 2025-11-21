@@ -43,18 +43,34 @@ function App() {
     }
   };
 
+  const handleReset = () => {
+    setPriceData(null);
+    setTopCryptosData(null);
+    setError(null);
+    setViewMode('welcome');
+  };
+
   return (
     <div className="App">
       <div className="app-container">
         <header className="app-header">
-          <h1>Crypto Price Bot</h1>
-          <p>Get real-time cryptocurrency prices</p>
+          <div className="header-content">
+            <div className="header-text">
+              <h1>Crypto Price Bot</h1>
+              <p>Get real-time cryptocurrency prices</p>
+            </div>
+            {viewMode !== 'welcome' && (
+              <button className="reset-btn" onClick={handleReset}>
+                🏠 Home
+              </button>
+            )}
+          </div>
         </header>
 
         <main className="app-main">
-          {viewMode === 'single' && <PriceDisplay priceData={priceData} error={error} />}
+          {viewMode === 'single' && <PriceDisplay priceData={priceData} error={error} onExampleClick={handleCryptoSubmit} />}
           {viewMode === 'top' && <TopCryptosList topCryptosData={topCryptosData} error={error} />}
-          {viewMode === 'welcome' && <PriceDisplay priceData={null} error={null} />}
+          {viewMode === 'welcome' && <PriceDisplay priceData={null} error={null} onExampleClick={handleCryptoSubmit} />}
 
           {isLoading && (
             <div className="loading-indicator">
