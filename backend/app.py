@@ -1,12 +1,22 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from crypto_service import CryptoService
+from crypto_service import CryptoService, RateLimitError
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for React frontend
 
 # Initialize crypto service
 crypto_service = CryptoService()
+
+
+@app.errorhandler(RateLimitError)
+def handle_rate_limit_error(e):
+    """Handle rate limit errors from CoinGecko API"""
+    return jsonify({
+        'success': False,
+        'error': str(e),
+        'rate_limited': True
+    }), 429
 
 @app.route('/')
 def home():
@@ -43,6 +53,8 @@ def get_crypto_price(crypto):
                 'error': f'Cryptocurrency "{crypto}" not found'
             }), 404
 
+    except RateLimitError:
+        raise
     except Exception as e:
         return jsonify({
             'success': False,
@@ -66,6 +78,8 @@ def search_crypto(query):
             'success': True,
             'results': results
         }), 200
+    except RateLimitError:
+        raise
     except Exception as e:
         return jsonify({
             'success': False,
@@ -92,6 +106,8 @@ def get_top_cryptos():
             'success': True,
             'data': results
         }), 200
+    except RateLimitError:
+        raise
     except Exception as e:
         return jsonify({
             'success': False,
